@@ -37,6 +37,16 @@ export async function getPopularMovies(request: any, reply: any) {
   return data;
 }
 
+// Fetch a list of top-rated movies from TMDB. This will be used to populate sections like "Top Rated Movies" on the frontend.
+export async function getTopRatedMovies(request: any, reply: any) {
+
+  const data = await tmdbFetch("/movie/top_rated", {
+    page: "1"
+  });
+
+  return data;
+}
+
 /*
 Fetch detailed information about a specific movie using its ID.
 Example: /api/movies/550

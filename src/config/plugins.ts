@@ -10,10 +10,11 @@ export async function registerPlugins(app: FastifyInstance) {
     /*
     Registers CORS support to allow requests from the frontend application. The allowed origin is defined in environment variables and credentials are enabled so cookies and authentication headers can be sent
     */ 
-  await app.register(cors, {
-    origin: env.CORS_ORIGIN,
-    credentials: true,
-  });
+    await app.register(cors, {
+      origin: "http://localhost:5173",
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    });
 
   /*
   Registers cookie handling for the server. Cookies can be signed using the secret defined in environment variables. This helps verify that cookies have not been tampered with

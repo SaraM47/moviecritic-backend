@@ -1,8 +1,15 @@
 import { FastifyInstance } from "fastify";
-import { searchMovies, getMovieById } from "../controllers/movie.controller";
+import { searchMovies, getMovieById, getPopularMovies } from "../controllers/movie.controller";
 
 // Registers routes for movie data fetched from TMDB
 export async function movieRoutes(app: FastifyInstance) {
-  app.get("/search", searchMovies); // Search movies using a query string
-  app.get("/:id", getMovieById); // Fetch detailed information for a specific movie
+
+  // Fetch a list of popular movies from TMDB
+  app.get("/popular", getPopularMovies);
+
+  // Search movies using a query string
+  app.get("/search", searchMovies);
+
+  // Fetch detailed information for a specific movie
+  app.get("/:id", getMovieById);
 }

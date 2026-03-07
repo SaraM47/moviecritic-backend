@@ -18,13 +18,33 @@ export async function tmdbFetch(
     url.searchParams.set(key, value);
   });
 
-  // Send the request to the TMDB API
-  const response = await fetch(url.toString());
+  /*
+  Add timeout protection so the backend does not hang if TMDB becomes slow or unresponsive.
+  */
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
 
-  // If the request fails, throw an error
-  if (!response.ok) {
-    throw new Error("TMDB request failed");
+  try {
+
+    // Send the request to the TMDB API
+    const response = await fetch(url.toString(), {
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+
+    // If the request fails, throw an error
+    if (!response.ok) {
+      throw new Error("TMDB request failed");
+    }
+
+    // Return the parsed JSON response
+    return response.json();
+
+  } catch (error) {
+
+    clearTimeout(timeout);
+
+    throw new Error("TMDB API request timed out or failed");
   }
-  // Return the parsed JSON response
-  return response.json();
 }

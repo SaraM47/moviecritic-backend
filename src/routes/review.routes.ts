@@ -5,6 +5,7 @@ import {
   getReviewsByMovie,
   updateReview,
   deleteReview,
+  getMyReviews,
 } from "../controllers/review.controller";
 
 // Registers routes related to movie reviews
@@ -14,6 +15,8 @@ export async function reviewRoutes(app: FastifyInstance) {
 
   // Protected routes that require authentication
   // Create a new review
+  app.get("/me", { preHandler: [requireAuth] }, getMyReviews);
+  
   app.post("/", { preHandler: [requireAuth] }, createReview);
   
   // Update an existing review

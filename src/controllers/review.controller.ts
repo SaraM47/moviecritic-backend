@@ -75,6 +75,23 @@ export async function getReviewsByMovie(
   return reply.send(reviews);
 }
 
+// Fetch reviews written by the currently authenticated user
+export async function getMyReviews(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const payload = request.user as { userId: string };
+
+  // Find all reviews written by this user
+  const reviews = await Review.find({
+    userId: new Types.ObjectId(payload.userId),
+  })
+    .sort({ createdAt: -1 })
+    .populate("userId", "username");
+
+  return reply.send(reviews);
+}
+
 // Update movie review by id, only allowed for the user who created the review
 export async function updateReview(
   request: FastifyRequest,

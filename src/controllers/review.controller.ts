@@ -6,12 +6,14 @@ import { Review } from "../models/Review";
 // Zod scheme to validate input data to create and update reviews
 const createReviewSchema = z.object({
   movieId: z.number(),
+  title: z.string().min(2).max(100),
   rating: z.number().min(1).max(10),
   text: z.string().min(2).max(2000),
 });
 
 // Validation schema for updating reviews
 const updateReviewSchema = z.object({
+  title: z.string().min(2).max(100).optional(),
   rating: z.number().min(1).max(10).optional(),
   text: z.string().min(2).max(2000).optional(),
 });
@@ -32,16 +34,20 @@ export async function createReview(
   }
 
   // Extract validated data and user information from the request
-  const { movieId, rating, text } = parsed.data;
+  const { movieId, title, rating, text } = parsed.data;
   const payload = request.user as { userId: string };
 
   // Store review in database
   const created = await Review.create({
     movieId,
+    title,
     rating,
     text,
     userId: new Types.ObjectId(payload.userId),
   });
+
+  // Populate username for frontend display
+  await created.populate("userId", "username");
 
   return reply.code(201).send(created);
 }
@@ -111,6 +117,10 @@ export async function updateReview(
   }
 
   // Update the review fields if they are provided in the request body
+  if (parsed.data.title !== undefined) {
+    review.title = parsed.data.title;
+  }
+
   if (parsed.data.rating !== undefined) {
     review.rating = parsed.data.rating;
   }

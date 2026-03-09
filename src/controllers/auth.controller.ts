@@ -104,7 +104,7 @@ export async function login(request: FastifyRequest, reply: FastifyReply) {
 // Logs out user by clearing cookie
 export async function logout(request: FastifyRequest, reply: FastifyReply) {
   reply
-    .clearCookie("token", { path: "/" })
+    .clearCookie("token", cookieOptions())
     .code(200)
     .send({ message: "Logged out" });
 }
